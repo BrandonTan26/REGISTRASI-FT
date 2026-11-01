@@ -11,9 +11,9 @@
 
   <style>
     :root {
-      --bg: #0b1120;
-      --card-bg: rgba(17, 24, 39, 0.88);
-      --card-border: rgba(255, 255, 255, 0.08);
+      --bg: #070d19;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --card-border: rgba(255, 255, 255, 0.12);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --primary: #2563eb;
@@ -21,23 +21,27 @@
       --accent: #f59e0b;
       --input-bg: #1e293b;
       --input-border: #334155;
-      --badge-bg: rgba(59, 130, 246, 0.12);
-      --badge-border: rgba(59, 130, 246, 0.3);
+      --badge-bg: rgba(59, 130, 246, 0.14);
+      --badge-border: rgba(59, 130, 246, 0.35);
+      --star-color: rgba(255, 255, 255, 0.85);
+      --moon-glow: rgba(147, 197, 253, 0.25);
     }
 
     [data-theme="light"] {
-      --bg: #f1f5f9;
-      --card-bg: rgba(255, 255, 255, 0.95);
+      --bg: #e2e8f0;
+      --card-bg: rgba(255, 255, 255, 0.94);
       --card-border: rgba(0, 0, 0, 0.08);
       --text-main: #0f172a;
       --text-muted: #64748b;
       --primary: #2563eb;
       --primary-hover: #1d4ed8;
       --accent: #d97706;
-      --input-bg: #ffffff;
+      --input-bg: #f8fafc;
       --input-border: #cbd5e1;
       --badge-bg: rgba(37, 99, 235, 0.08);
       --badge-border: rgba(37, 99, 235, 0.2);
+      --star-color: rgba(71, 85, 105, 0.35);
+      --moon-glow: rgba(59, 130, 246, 0.15);
     }
 
     * {
@@ -56,19 +60,72 @@
       position: relative;
     }
 
-    .glow-orb {
+    /* ================= AURA & ANIMASI LANGIT (BULAN & BINTANG) ================= */
+    .sky-canvas {
       position: fixed;
-      width: 450px;
-      height: 450px;
-      border-radius: 50%;
-      filter: blur(120px);
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       pointer-events: none;
-      z-index: 0;
-      opacity: 0.35;
+      z-index: 1;
+      overflow: hidden;
     }
-    .orb-1 { top: -100px; left: -100px; background: #3b82f6; }
-    .orb-2 { bottom: -100px; right: -100px; background: #ef4444; }
 
+    /* Bulan Mengambang Lembut */
+    .sky-moon {
+      position: absolute;
+      top: 35px;
+      left: 8%;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      box-shadow: -10px 8px 0 2px #fde047;
+      filter: drop-shadow(0 0 16px var(--moon-glow));
+      animation: moonFloat 8s ease-in-out infinite alternate;
+      opacity: 0.9;
+    }
+
+    @keyframes moonFloat {
+      0% { transform: translateY(0px) rotate(-6deg); }
+      100% { transform: translateY(18px) rotate(4deg); }
+    }
+
+    /* Bintang Berjalan & Berkelip */
+    .star {
+      position: absolute;
+      background: var(--star-color);
+      border-radius: 50%;
+      animation: starTwinkle var(--duration, 3s) infinite alternate ease-in-out;
+    }
+
+    @keyframes starTwinkle {
+      0% { opacity: 0.15; transform: scale(0.7); }
+      100% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* Bintang Jatuh (Shooting Star) */
+    .shooting-star {
+      position: absolute;
+      top: 15%;
+      left: -120px;
+      width: 90px;
+      height: 2px;
+      background: linear-gradient(90deg, #60a5fa, transparent);
+      border-radius: 999px;
+      transform: rotate(-28deg);
+      animation: shoot 9s linear infinite;
+      opacity: 0;
+    }
+
+    @keyframes shoot {
+      0% { transform: translate(0, 0) rotate(-28deg); opacity: 0; }
+      15% { opacity: 0.85; }
+      30% { transform: translate(90vw, 45vh) rotate(-28deg); opacity: 0; }
+      100% { transform: translate(90vw, 45vh) rotate(-28deg); opacity: 0; }
+    }
+
+    /* Header Nav */
     header {
       position: fixed;
       top: 0;
@@ -91,9 +148,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
     }
 
+    /* Slider Container */
     .slider-viewport {
       width: 100vw;
       min-height: 100vh;
@@ -115,7 +174,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 90px 20px 40px;
+      padding: 85px 20px 40px;
     }
 
     .cover-card, .form-card {
@@ -123,10 +182,10 @@
       border: 1px solid var(--card-border);
       backdrop-filter: blur(16px);
       border-radius: 28px;
-      max-width: 560px;
+      max-width: 550px;
       width: 100%;
-      padding: 40px 32px;
-      box-shadow: 0 20px 40px -15px rgba(0,0,0,0.4);
+      padding: 38px 30px;
+      box-shadow: 0 20px 45px -12px rgba(0,0,0,0.45);
     }
 
     .cover-card {
@@ -138,26 +197,27 @@
 
     .brand-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 2.2rem;
+      font-size: 2.25rem;
       font-weight: 800;
       display: inline-flex;
       gap: 2px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .brand-title .blue-txt { color: #0284c7; }
     .brand-title .red-txt { color: #ef4444; }
 
     .badge-wrap {
       display: flex;
-      gap: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
       justify-content: center;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       padding: 6px 14px;
       border-radius: 999px;
@@ -165,26 +225,26 @@
       border: 1px solid var(--badge-border);
       color: var(--primary);
     }
-    .badge-purple {
-      color: #a855f7;
-      background: rgba(168, 85, 247, 0.1);
-      border-color: rgba(168, 85, 247, 0.25);
+    .badge-gold {
+      color: #f59e0b;
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.3);
     }
 
     .hero-heading {
-      font-size: 1.8rem;
+      font-size: 1.85rem;
       font-weight: 800;
       letter-spacing: -0.02em;
-      line-height: 1.3;
-      margin-bottom: 14px;
+      line-height: 1.25;
+      margin-bottom: 16px;
     }
 
     .motivation-box {
       background: rgba(59, 130, 246, 0.08);
       border-left: 3px solid var(--primary);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 14px 16px;
-      margin: 10px 0 24px;
+      margin: 8px 0 24px;
       text-align: left;
     }
     .motivation-quote {
@@ -194,7 +254,7 @@
       font-style: italic;
     }
     .motivation-author {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: var(--text-muted);
       margin-top: 6px;
       text-transform: uppercase;
@@ -208,7 +268,7 @@
       font-size: 1rem;
       border: none;
       border-radius: 14px;
-      padding: 16px 36px;
+      padding: 15px 32px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
@@ -217,12 +277,15 @@
       justify-content: center;
       box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.5);
     }
+    .btn-cta:hover {
+      transform: translateY(-2px);
+    }
 
     .form-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .btn-back {
@@ -240,14 +303,14 @@
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 15px;
     }
     .form-label {
       display: block;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 700;
       letter-spacing: 0.03em;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       text-transform: uppercase;
       color: var(--text-muted);
     }
@@ -260,9 +323,9 @@
       background: var(--input-bg);
       border: 1px solid var(--input-border);
       color: var(--text-main);
-      padding: 12px 14px;
+      padding: 11px 14px;
       border-radius: 12px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       outline: none;
     }
     .input-control:focus {
@@ -285,8 +348,8 @@
       background: var(--input-bg);
       border: 1px solid var(--input-border);
       border-radius: 12px;
-      padding: 14px 16px;
-      margin: 20px 0 8px;
+      padding: 13px 15px;
+      margin: 18px 0 8px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -299,7 +362,7 @@
       cursor: pointer;
     }
     .checkbox-text {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 700;
     }
 
@@ -311,10 +374,10 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
       color: var(--accent);
-      margin-bottom: 22px;
+      margin-bottom: 20px;
     }
 
     .success-card {
@@ -337,8 +400,18 @@
 </head>
 <body data-theme="dark">
 
-  <div class="glow-orb orb-1"></div>
-  <div class="glow-orb orb-2"></div>
+  <!-- Aksen Langit, Bulan & Bintang Berjalan -->
+  <div class="sky-canvas">
+    <div class="sky-moon"></div>
+    <div class="shooting-star"></div>
+    <!-- Bintang kelap-kelip -->
+    <div class="star" style="top: 12%; left: 24%; width: 3px; height: 3px; --duration: 2.2s;"></div>
+    <div class="star" style="top: 28%; left: 82%; width: 2px; height: 2px; --duration: 3.5s;"></div>
+    <div class="star" style="top: 65%; left: 12%; width: 4px; height: 4px; --duration: 4.1s;"></div>
+    <div class="star" style="top: 75%; left: 78%; width: 3px; height: 3px; --duration: 2.8s;"></div>
+    <div class="star" style="top: 40%; left: 90%; width: 2px; height: 2px; --duration: 3.2s;"></div>
+    <div class="star" style="top: 85%; left: 45%; width: 3px; height: 3px; --duration: 2.5s;"></div>
+  </div>
 
   <header>
     <button class="theme-toggle" id="themeBtn" aria-label="Toggle Theme">
@@ -349,43 +422,44 @@
   <div class="slider-viewport">
     <div class="slider-track" id="sliderTrack">
 
-      <!-- SLIDE 1: COVER -->
+      <!-- ================= SLIDE 1: COVER ================= -->
       <section class="slide">
         <div class="cover-card">
           <div class="brand-title">
             <span class="blue-txt">Alfa</span><span class="red-txt">learning</span>
           </div>
 
+          <!-- Konsep Badge Baru Lebih Relevan -->
           <div class="badge-wrap">
             <span class="badge">
-              <i data-lucide="layers" style="width:14px;height:14px;"></i>
-              161,819 Questions Ready
+              <i data-lucide="rocket" style="width:14px;height:14px;"></i>
+              Official Registration
             </span>
-            <span class="badge badge-purple">
-              <i data-lucide="sparkles" style="width:14px;height:14px;"></i>
-              Master Edition 2026
+            <span class="badge badge-gold">
+              <i data-lucide="award" style="width:14px;height:14px;"></i>
+              Career & Competency
             </span>
           </div>
 
           <h1 class="hero-heading">
-            Welcome to Functional Test Registration
+            Welcome! Functional Test Registration
           </h1>
 
           <div class="motivation-box">
             <p class="motivation-quote">
-              "Mastery is not an accident; it is the continuous pursuit of excellence. Prepare today to conquer your functional challenges tomorrow."
+              "Every great achievement begins with the courage to test your limits. Step up, prepare your best, and shine in your retail journey!"
             </p>
             <p class="motivation-author">— Retail Learning & Competency Team</p>
           </div>
 
           <button class="btn-cta" id="btnGoRegister">
-            REGISTER NOW
+            DAFTAR SEKARANG
             <i data-lucide="arrow-right" style="width: 18px; height: 18px;"></i>
           </button>
         </div>
       </section>
 
-      <!-- SLIDE 2: FORM REGISTRATION -->
+      <!-- ================= SLIDE 2: FORM PENDAFTARAN ================= -->
       <section class="slide">
         <div class="form-card">
           <div id="formContainer">
@@ -394,7 +468,7 @@
                 <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
                 Kembali
               </button>
-              <h2 style="font-size: 1.15rem; font-weight: 800;">REGISTRATION FORM</h2>
+              <h2 style="font-size: 1.15rem; font-weight: 800;">FORM PENDAFTARAN</h2>
             </div>
 
             <form id="regForm">
@@ -513,7 +587,7 @@
       lucide.createIcons();
     });
 
-    // Slide Transition
+    // Slide Controls
     btnGoRegister.addEventListener('click', () => {
       sliderTrack.style.transform = 'translateX(-100vw)';
     });
@@ -522,7 +596,7 @@
       sliderTrack.style.transform = 'translateX(0vw)';
     });
 
-    // Toggle Sandi
+    // Show/Hide Password
     togglePwd.addEventListener('click', () => {
       const isPwd = pwdInput.type === 'password';
       pwdInput.type = isPwd ? 'text' : 'password';
@@ -530,11 +604,12 @@
       lucide.createIcons();
     });
 
-    // Form Submit Sat-Set (Instan)
+    // Form Submit Sat-Set (Anti-Tabrakan & Background Sync)
     regForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
       const payload = {
+        id: Date.now() + "_" + Math.floor(Math.random() * 1000), // Identifier unik anti tabrakan
         branch: document.getElementById('branch').value,
         nama: document.getElementById('nama').value,
         nik: document.getElementById('nik').value,
@@ -544,17 +619,17 @@
         keterangan: "LUNAS"
       };
 
-      // 1. Langsung alihkan tampilan sukses tanpa nunggu loading lambat
+      // 1. Langsung alihkan layar ke SUKSES dalam 0.1 detik (super sat-set)
       formContainer.style.display = 'none';
       successBox.style.display = 'block';
 
-      // 2. Kirim di background secara asinkron
+      // 2. Kirim di antrean background ke Google Sheets
       fetch(SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      }).catch(err => console.error("Sync error:", err));
+      }).catch(err => console.error("Antrian sync:", err));
     });
 
     // Reset Form
